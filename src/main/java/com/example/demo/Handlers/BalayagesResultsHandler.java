@@ -7,9 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.example.demo.Dtos.BalayageResultsDto;
-import com.example.demo.Dtos.ClientDto;
-import com.example.demo.Dtos.CriminalDto;
-import com.example.demo.Dtos.ReferenceResultsDto;
 import com.example.demo.repositories.ClientRefRepository;
 import com.example.demo.repositories.ClientRepository;
 import com.example.demo.repositories.CriminalRefRepository;
@@ -41,20 +38,18 @@ public class BalayagesResultsHandler  {
 	private String adress;
 	@Value("${SearchUrl}")
 	private String SearchUrl;
-	private Client convertToEntity (ClientDto clientdto)
-	{ 
-		
-		Client client=modelMapper.map(clientdto,Client.class);
-		return client;
+	private Boolean done=false;
+	public Boolean getDone() {
+		return done;
 	}
-	private Criminal convertToCEntity (CriminalDto criminaldto)
-	{
-		Criminal criminal=modelMapper.map(criminaldto,Criminal.class);
-		return criminal;
+
+	public void setDone(Boolean done) {
+		this.done = done;
 	}
+
 	public void GetBalayages () 
 	{
-			ClientDto clientdto = new ClientDto();
+			Client client = new Client();
 			int start=0;
 			int end=10;
 			String body = "{\"startRow\":"+start+",\"endRow\":"+end+",\"sortModel\":[],\"filterModel\":{},\"search_sources\":[\"BATCH\"]}";
@@ -73,23 +68,21 @@ public class BalayagesResultsHandler  {
 		{
 			if (stateHandler.getStatus().equals("COMPLETED"))
 			{
-				clientdto.setClient_code(response.getItems().get(i).getClient_code());
-				clientdto.setFirst_name(response.getItems().get(i).getFirst_name());
-				clientdto.setLast_name(response.getItems().get(i).getLast_name());
-				clientdto.setWhole_name(response.getItems().get(i).getWhole_name());
-				Client client=	convertToEntity(clientdto);
+				client.setClient_code(response.getItems().get(i).getClient_code());
+				client.setFirst_name(response.getItems().get(i).getFirst_name());
+				client.setLast_name(response.getItems().get(i).getLast_name());
+				client.setWhole_name(response.getItems().get(i).getWhole_name());
 				ArrayList<Criminal> criminallist=new ArrayList<Criminal>();
+				Criminal criminal=new Criminal();
 				for (int j=0;j<response.getItems().get(i).getSearchItems().size();j++)
 				{
-					CriminalDto criminaldto=new CriminalDto();
 					Double score=response.getItems().get(i).getSearchItems().get(j).getScore();
 					Integer person_id=response.getItems().get(i).getSearchItems().get(j).getPerson_id();
-					criminaldto.setPerson_id(person_id);
-					criminaldto.setScore(score);
-				criminaldto.getClients().add(client);
-				Criminal criminal =convertToCEntity(criminaldto);
+					criminal.setPerson_id(person_id);
+					criminal.setScore(score);
+				criminal.getClients().add(client);
 				criminallist.add(criminal);
-				clientdto.getMatched_criminals().add(criminal);
+				client.getMatched_criminals().add(criminal);
 				if (j==response.getItems().get(i).getSearchItems().size()-1)
 				{	
 			crimrep.saveAll(criminallist);	
@@ -97,21 +90,19 @@ public class BalayagesResultsHandler  {
 				}
 			}
 				else {
-					ReferenceResultsDto refresdto=new ReferenceResultsDto();
-					refresdto.setClient_code(response.getItems().get(i).getClient_code());
-					ReferenceResults refres=modelMapper.map(refresdto,ReferenceResults.class);
+					ReferenceResults refres=new ReferenceResults();
+					refres.setClient_code(response.getItems().get(i).getClient_code());
 					ArrayList<CriminalReference> criminallist=new ArrayList<CriminalReference>();
+					CriminalReference crimref = new CriminalReference();
 					for (int j=0;j<response.getItems().get(i).getSearchItems().size();j++)
 					{
-						CriminalReference crimref = new CriminalReference();
 						Integer person_id=response.getItems().get(i).getSearchItems().get(j).getPerson_id();
 						crimref.setPerson_id(person_id);
 					crimref.getClients().add(refres);
 					criminallist.add(crimref);
-					refresdto.getMatched_criminals().add(crimref);
+					refres.getMatched_criminals().add(crimref);
 					if (j==response.getItems().get(i).getSearchItems().size()-1)
 					{
-						System.out.println(criminallist);
 				crimrefrep.saveAll(criminallist);
 					}
 					}		
@@ -139,23 +130,21 @@ public class BalayagesResultsHandler  {
 		
     	   if (stateHandler.getStatus().equals("COMPLETED"))
 			{
-				clientdto.setClient_code(response1.getItems().get(i).getClient_code());
-				clientdto.setFirst_name(response1.getItems().get(i).getFirst_name());
-				clientdto.setLast_name(response1.getItems().get(i).getLast_name());
-				clientdto.setWhole_name(response1.getItems().get(i).getWhole_name());
-				Client client=	convertToEntity(clientdto);
+				client.setClient_code(response1.getItems().get(i).getClient_code());
+				client.setFirst_name(response1.getItems().get(i).getFirst_name());
+				client.setLast_name(response1.getItems().get(i).getLast_name());
+				client.setWhole_name(response1.getItems().get(i).getWhole_name());
 				ArrayList<Criminal> criminallist=new ArrayList<Criminal>();
+				Criminal criminal=new Criminal();
 				for (int j=0;j<response1.getItems().get(i).getSearchItems().size();j++)
 				{
-					CriminalDto criminaldto=new CriminalDto();
 					Double score=response1.getItems().get(i).getSearchItems().get(j).getScore();
 					Integer person_id=response1.getItems().get(i).getSearchItems().get(j).getPerson_id();
-					criminaldto.setPerson_id(person_id);
-					criminaldto.setScore(score);
-				criminaldto.getClients().add(client);
-				Criminal criminal =convertToCEntity(criminaldto);
+					criminal.setPerson_id(person_id);
+					criminal.setScore(score);
+				criminal.getClients().add(client);
 				criminallist.add(criminal);
-				clientdto.getMatched_criminals().add(criminal);
+				client.getMatched_criminals().add(criminal);
 				if (j==response1.getItems().get(i).getSearchItems().size()-1)
 				{		
 			crimrep.saveAll(criminallist);
@@ -164,22 +153,21 @@ public class BalayagesResultsHandler  {
 			}
     	   else
     		   {
-    		   ReferenceResultsDto refresdto=new ReferenceResultsDto();
+    		   ReferenceResults refres=new ReferenceResults();
     		  
-			refresdto.setClient_code(response1.getItems().get(i).getClient_code());
-			ReferenceResults refres=modelMapper.map(refresdto,ReferenceResults.class);
+			refres.setClient_code(response1.getItems().get(i).getClient_code());
 			ArrayList<CriminalReference> criminallist=new ArrayList<CriminalReference>();
+			CriminalReference crimref = new CriminalReference();
 			for (int j=0;j<response1.getItems().get(i).getSearchItems().size();j++)
 			{
-				CriminalReference crimref = new CriminalReference();
 				Integer person_id=response1.getItems().get(i).getSearchItems().get(j).getPerson_id();
 				crimref.setPerson_id(person_id);
 			crimref.getClients().add(refres);
 			criminallist.add(crimref);
-			refresdto.getMatched_criminals().add(crimref);
+			refres.getMatched_criminals().add(crimref);
 			if (j==response1.getItems().get(i).getSearchItems().size()-1)
 			{
-				System.out.println(criminallist);
+				
 		crimrefrep.saveAll(criminallist);
 			}
 			}		
@@ -187,10 +175,6 @@ public class BalayagesResultsHandler  {
 		 }
 		start+=10;
 		}	
+		this.done=true;
 	}
-	
 	}
-
-	
-	
-

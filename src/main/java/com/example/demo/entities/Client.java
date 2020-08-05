@@ -1,4 +1,5 @@
 package com.example.demo.entities;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -16,7 +17,7 @@ private String first_name;
 private String last_name;
 private String whole_name;
 @ManyToMany(mappedBy="clients",cascade = CascadeType.PERSIST)
-private List<Criminal> matched_criminals;
+private List<Criminal> matched_criminals=new ArrayList<Criminal>();
 public String getFirst_name() {
 	return first_name;
 }

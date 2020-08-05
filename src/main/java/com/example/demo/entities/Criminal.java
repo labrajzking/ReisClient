@@ -1,4 +1,5 @@
 package com.example.demo.entities;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -12,7 +13,7 @@ private Integer person_id;
 private Double score;
 @ManyToMany(cascade = CascadeType.ALL)
 @JoinTable(name="finallist")
-private List<Client> clients;
+private List<Client> clients=new ArrayList <Client>();
 public Integer getPerson_id() {
 	return person_id;
 }

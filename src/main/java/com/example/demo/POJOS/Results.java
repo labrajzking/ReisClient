@@ -1,19 +1,19 @@
 package com.example.demo.POJOS;
 
 public class Results {
-private String clients_client_code;
-private Integer matched_criminals_person_id;
-public String getClients_client_code() {
-	return clients_client_code;
+private String client_code;
+private Integer person_id;
+public String getClient_code() {
+	return client_code;
 }
-public void setClients_client_code(String clients_client_code) {
-	this.clients_client_code = clients_client_code;
+public void setClient_code(String client_code) {
+	this.client_code = client_code;
 }
-public Integer getMatched_criminals_person_id() {
-	return matched_criminals_person_id;
+public Integer getPerson_id() {
+	return person_id;
 }
-public void setMatched_criminals_person_id(Integer matched_criminals_person_id) {
-	this.matched_criminals_person_id = matched_criminals_person_id;
+public void setPerson_id(Integer person_id) {
+	this.person_id = person_id;
 }
 
 }

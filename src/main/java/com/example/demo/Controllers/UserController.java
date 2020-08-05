@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.Dtos.UserDto;
+import com.example.demo.POJOS.Results;
 import com.example.demo.entities.UserE;
 import com.example.demo.services.FinalResultsService;
 import com.example.demo.services.GetResultsService;
+import com.example.demo.services.ProgressionService;
 import com.example.demo.services.StartBalayagesService;
 import com.example.demo.services.UserService;
 
@@ -27,6 +29,8 @@ GetResultsService getresultsservice;
 StartBalayagesService startbalayagesservice;
 @Autowired 
 FinalResultsService finalservice;
+@Autowired 
+ProgressionService progressionservice;
 private UserE ConvertToEntity (UserDto userdto)
 {
 	modelMapper.getConfiguration()
@@ -63,9 +67,21 @@ public void StartBalayages () throws IOException
 }
 @CrossOrigin(origins = "http://localhost:4200")
 @GetMapping ("/GetFinalResults")
-public List<String> retunnResults()
+public List<Results> retunnResults()
 {
 	System.out.println("RESULTS");
 	return finalservice.getFinalResults();
+}
+@CrossOrigin(origins = "http://localhost:4200")
+@GetMapping ("/Balayagesprogression")
+public Double returnProgression ()
+{
+	return progressionservice.returnProgression();
+}
+@CrossOrigin(origins = "http://localhost:4200")
+@GetMapping ("/ResultsSavingProgression")
+public Boolean returnResultsProgression()
+{
+	return progressionservice.returnResultsProgression();
 }
 }
