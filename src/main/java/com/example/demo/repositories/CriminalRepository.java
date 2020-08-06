@@ -8,5 +8,8 @@ import com.example.demo.entities.Criminal;
 public interface CriminalRepository extends JpaRepository <Criminal,Integer>{
 @Query(value="SELECT * FROM finallist f where f.clients_client_code not in (SELECT clients_client_code from referencelist)",
 			nativeQuery=true)
-public	List<List<Object>> FinalResults();
+public	List<List<Object>> FinalResults1();
+@Query(value="SELECT * FROM referencelist ref where ref.clients_client_code not in (SELECT clients_client_code from finallist)",
+nativeQuery=true)
+public	List<List<Object>> FinalResults2();
 }

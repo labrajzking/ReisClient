@@ -2,12 +2,10 @@ package com.example.demo.services;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.POJOS.Outcome;
 import com.example.demo.POJOS.Results;
 import com.example.demo.repositories.CriminalRepository;
 @Service
@@ -17,10 +15,8 @@ CriminalRepository crimrep;
 private String client_code;
 private Integer person_id;
 @Override
-	public List<Results> getFinalResults() {
-		List<List<Object>> results=crimrep.FinalResults();
-		JSONArray json =new JSONArray (results);
-		System.out.println(json);
+	public List<Results> getFinalResults1() {
+		List<List<Object>> results=crimrep.FinalResults1();
 		HashMap<Integer,Results> resultsHash=new HashMap<Integer,Results>();
 		for (int i=0;i<results.size();i++)
 		{
@@ -32,14 +28,56 @@ private Integer person_id;
 			int hash=hashCode();
 			if (!resultsHash.containsKey(hash))
 			{
+				
 			resultsHash.put(hash,res);
-			JSONObject obj=new JSONObject (res);
-			System.out.println(obj);
 			}
 		}
+		
 		List<Results> resultsList =new ArrayList<Results>(resultsHash.values()); 
 	return resultsList;
 	}
+@Override
+public List<Results> getFinalResults2() {
+	List<List<Object>> results=crimrep.FinalResults2();
+	HashMap<Integer,Results> resultsHash=new HashMap<Integer,Results>();
+	for (int i=0;i<results.size();i++)
+	{
+		Results res=new Results();
+		res.setClient_code((String) results.get(i).get(1));
+		res.setPerson_id((Integer)results.get(i).get(0));
+		this.client_code=(String) results.get(i).get(1);
+		this.person_id=(Integer) results.get(i).get(0);
+		int hash=hashCode();
+		if (!resultsHash.containsKey(hash))
+		{
+		resultsHash.put(hash,res);
+		}
+	}
+
+    
+	List<Results> resultsList =new ArrayList<Results>(resultsHash.values()); 
+return resultsList;	
+}
+@Override
+public Outcome returnOutcome() {
+	Outcome Outcome=new Outcome();
+	if ((getFinalResults1().size())==(getFinalResults2().size()))
+	{
+		Outcome.setResultsList(getFinalResults1());
+		Outcome.setOutcome("The Results Are even");
+	}
+	else if ((getFinalResults1().size())>(getFinalResults2().size()))
+	{
+		Outcome.setResultsList(getFinalResults1());
+		Outcome.setOutcome("The Algorithme  Performance  Has Increased");
+	}
+	else if ((getFinalResults1().size())<(getFinalResults2().size()))
+	{
+		Outcome.setResultsList(getFinalResults2());
+		Outcome.setOutcome("The Algorithme Performance  Has Decreased");
+	}
+	return Outcome;
+}
 @Override
 public int hashCode() {
 	final int prime = 31;
@@ -68,6 +106,5 @@ public boolean equals(Object obj) {
 	} else if (!person_id.equals(other.person_id))
 		return false;
 	return true;
-}
-	 
+}	 
 }

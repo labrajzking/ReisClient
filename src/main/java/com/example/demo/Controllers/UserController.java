@@ -1,6 +1,5 @@
 package com.example.demo.Controllers;
 import java.io.IOException;
-import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.Dtos.UserDto;
-import com.example.demo.POJOS.Results;
+import com.example.demo.POJOS.Outcome;
 import com.example.demo.entities.UserE;
 import com.example.demo.services.FinalResultsService;
 import com.example.demo.services.GetResultsService;
@@ -67,10 +66,9 @@ public void StartBalayages () throws IOException
 }
 @CrossOrigin(origins = "http://localhost:4200")
 @GetMapping ("/GetFinalResults")
-public List<Results> retunnResults()
+public Outcome retunnResults()
 {
-	System.out.println("RESULTS");
-	return finalservice.getFinalResults();
+	return finalservice.returnOutcome();
 }
 @CrossOrigin(origins = "http://localhost:4200")
 @GetMapping ("/Balayagesprogression")
