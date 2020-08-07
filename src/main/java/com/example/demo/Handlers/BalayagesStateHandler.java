@@ -47,7 +47,7 @@ private void GetState ()
 		isEnabled=false;
 		balayagesHandler.GetBalayages();
 	}
-	}	
+	}
 }
 public String getStatus() {
 	return status;

@@ -80,6 +80,6 @@ public Double returnProgression ()
 @GetMapping ("/ResultsSavingProgression")
 public Boolean returnResultsProgression()
 {
-	return progressionservice.returnResultsProgression();
+return progressionservice.returnResultsProgression();
 }
 }
