@@ -1,5 +1,8 @@
 package com.example.demo.Controllers;
 import java.io.IOException;
+
+import javax.persistence.NonUniqueResultException;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.Dtos.UserDto;
 import com.example.demo.POJOS.BalayagesProgression;
 import com.example.demo.POJOS.Outcome;
+import com.example.demo.POJOS.UserAlreadyExistsException;
 import com.example.demo.entities.UserE;
 import com.example.demo.services.FinalResultsService;
 import com.example.demo.services.GetResultsService;
@@ -49,9 +53,15 @@ public UserDto signup (@RequestBody UserDto userdto)
 {	System.out.println(userdto.getUsername());
 System.out.println(userdto.getPassword());
 	UserE user=ConvertToEntity(userdto);
+	try {
 	userservice.signup(user);
 	UserDto userDTO=ConvertToDto(user);
 	return userDTO;
+	}
+	catch (NonUniqueResultException ex)
+	{
+		throw new UserAlreadyExistsException("USER Already Exists");
+	}
 }
 @CrossOrigin(origins = "http://localhost:4200")
 @GetMapping ("/GetResults")

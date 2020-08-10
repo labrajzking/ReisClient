@@ -16,6 +16,5 @@ private BCryptPasswordEncoder bCryptPasswordEncoder;
 public void signup(UserE user) {
 	user.setPassword(bCryptPasswordEncoder.encode((user.getPassword())));
 	userrepo.save(user);
-	
 }
 }
