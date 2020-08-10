@@ -23,7 +23,8 @@ private String adress;
 @Value ("${ProgressionUrl}")
 private String ProgressionUrl;
 private Double progression;
-@Scheduled (fixedRate=1000*20)
+private Boolean forcedone=false;
+@Scheduled (fixedRate=1000*60)
 private void GetState () 
 {
 	Launched=balayagesActivator.getLaunched();
@@ -43,7 +44,7 @@ private void GetState ()
 	status=(String) obj.get("status");
 	System.out.println(status);
 	if (status.equals("COMPLETED"))
-	{
+	{ forcedone=true;
 		isEnabled=false;
 		balayagesHandler.GetBalayages();
 	}
@@ -61,4 +62,11 @@ public Double getProgression() {
 public void setProgression(Double progression) {
 	this.progression = progression;
 }
+public Boolean getForcedone() {
+	return forcedone;
+}
+public void setForcedone(Boolean forcedone) {
+	this.forcedone = forcedone;
+}
+
 }

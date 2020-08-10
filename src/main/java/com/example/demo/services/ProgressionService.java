@@ -5,15 +5,19 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.Handlers.BalayagesResultsHandler;
 import com.example.demo.Handlers.BalayagesStateHandler;
+import com.example.demo.POJOS.BalayagesProgression;
 @Service
 public class ProgressionService implements ProgressionServiceI {
 @Autowired 
 BalayagesStateHandler stateHandler;
 @Autowired
 BalayagesResultsHandler resultshandler;
-public Double returnProgression() {
-	System.out.println("Progression!!!!!"+stateHandler.getProgression());
-	return stateHandler.getProgression();
+public BalayagesProgression returnProgression() {
+	
+	BalayagesProgression prog=new BalayagesProgression();
+	prog.setForcedone(stateHandler.getForcedone());
+	prog.setProgression(stateHandler.getProgression());
+	return prog;
 }
 @Override
 public Boolean returnResultsProgression() {
