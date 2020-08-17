@@ -53,7 +53,7 @@ public class TokenHandler implements CommandLineRunner{
 		return adminDto;
 	}
 	
-	@Scheduled(fixedRate=1000*180)
+	@Scheduled(fixedRate=1000*60)
 public void RefreshToken()
 {
 		if (tokencatched)
@@ -67,7 +67,7 @@ public void RefreshToken()
 			  .bodyToMono(AuthResponseDto.class)
 			  .block();
 	String TokenKey=response.getToken();
-	System.out.println("REFRESHED TOEKN");
+	System.out.println("REFRESHED TOKEN");
 	System.out.println(TokenKey);
 	this.jwt=TokenKey;
 	}

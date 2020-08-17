@@ -1,19 +1,19 @@
 package com.example.demo.entities;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 @Entity
 public class Criminal {
 @Id
 private Integer person_id;
 private Double score;
-@ManyToMany(cascade = CascadeType.ALL)
-@JoinTable(name="finallist")
+@ManyToMany(mappedBy="matched_criminals",fetch = FetchType.EAGER)
 private List<Client> clients=new ArrayList <Client>();
+@ManyToMany(mappedBy="matched_reference_criminals",fetch = FetchType.EAGER)
+private List<Client> clientsreference =new ArrayList<Client>();
 public Integer getPerson_id() {
 	return person_id;
 }
@@ -32,6 +32,10 @@ public List<Client> getClients() {
 public void setClients(List<Client> clients) {
 	this.clients= clients;
 }
-
-
+public List<Client> getClientsreference() {
+	return clientsreference;
+}
+public void setClientsreference(List<Client> clientsreference) {
+	this.clientsreference = clientsreference;
+}
 }

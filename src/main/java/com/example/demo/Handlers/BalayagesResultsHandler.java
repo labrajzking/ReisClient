@@ -1,23 +1,23 @@
 package com.example.demo.Handlers;
 import java.util.ArrayList;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.example.demo.Dtos.BalayageResultsDto;
-import com.example.demo.repositories.CriminalRefRepository;
+import com.example.demo.repositories.ClientRepository;
 import com.example.demo.repositories.CriminalRepository;
 import com.example.demo.entities.Client;
 import com.example.demo.entities.Criminal;
-import com.example.demo.entities.CriminalReference;
-import com.example.demo.entities.ReferenceResults;
 import reactor.core.publisher.Mono;
 @Component
 public class BalayagesResultsHandler  {
 	@Autowired
-	CriminalRefRepository crimrefrep;
+	ClientRepository clientrep;
 	@Autowired
 	ModelMapper modelMapper;
 	@Autowired
@@ -31,6 +31,7 @@ public class BalayagesResultsHandler  {
 	@Value("${SearchUrl}")
 	private String SearchUrl;
 	private Boolean done=false;
+	private Boolean completed=true;
 	public Boolean getDone() {
 		return done;
 	}
@@ -38,10 +39,9 @@ public class BalayagesResultsHandler  {
 	public void setDone(Boolean done) {
 		this.done = done;
 	}
-
+	@Scheduled (fixedRate=1000*600,initialDelay=1000*15)
 	public void GetBalayages () 
 	{
-			Client client = new Client();
 			int start=0;
 			int end=10;
 			String body = "{\"startRow\":"+start+",\"endRow\":"+end+",\"sortModel\":[],\"filterModel\":{},\"search_sources\":[\"BATCH\"]}";
@@ -56,50 +56,71 @@ public class BalayagesResultsHandler  {
 				  .retrieve()
 				  .bodyToMono(BalayageResultsDto.class)
 				  .block();
-         if (stateHandler.getStatus().equals("COMPLETED"))
+         ArrayList<Client> clientlist=new ArrayList<Client>();
+         //if (stateHandler.getStatus().equals("COMPLETED"))
+         if (completed)
 			{
-        	 crimrep.deleteAll();
 		for (int i=0;i<response.getItems().size();i++)
 		{
-			
+			Client client =clientrep.findByCode(response.getItems().get(i).getClient_code());
+			if (client==null)
+			{
+				client=new Client();
 				client.setClient_code(response.getItems().get(i).getClient_code());
 				client.setFirst_name(response.getItems().get(i).getFirst_name());
 				client.setLast_name(response.getItems().get(i).getLast_name());
 				client.setWhole_name(response.getItems().get(i).getWhole_name());
-				Criminal criminal=new Criminal();
+			}
 				for (int j=0;j<response.getItems().get(i).getSearchItems().size();j++)
 				{ 
-					Double score=response.getItems().get(i).getSearchItems().get(j).getScore();
 					Integer person_id=response.getItems().get(i).getSearchItems().get(j).getPerson_id();
+					 Criminal criminal=crimrep.findByCode(person_id);
+					 if (criminal==null)
+					 {
+						 criminal=new Criminal();
+					Double score=response.getItems().get(i).getSearchItems().get(j).getScore();
 					criminal.setPerson_id(person_id);
 					criminal.setScore(score);
+					 }
 					criminal.getClients().add(client);
 				client.getMatched_criminals().add(criminal);
-			ArrayList<Client> clientlist =new ArrayList<Client>();
-			clientlist.add(client);
-			criminal.setClients(clientlist);
-				crimrep.save(criminal);
 				}
+				clientlist.add(client);
 			}
+		clientrep.saveAll(clientlist);
+		clientlist.clear();
 			}
 				else {
-					crimrefrep.deleteAll();
+					
 					for (int i=0;i<response.getItems().size();i++)
 					{
-					ReferenceResults refres=new ReferenceResults();
-					refres.setClient_code(response.getItems().get(i).getClient_code());
-					CriminalReference crimref = new CriminalReference();
+					Client client =clientrep.findByCode(response.getItems().get(i).getClient_code());
+					if (client==null)
+					{
+					client=new Client();
+					client.setClient_code(response.getItems().get(i).getClient_code());
+					client.setFirst_name(response.getItems().get(i).getFirst_name());
+					client.setLast_name(response.getItems().get(i).getLast_name());
+					client.setWhole_name(response.getItems().get(i).getWhole_name());
+					}
 					for (int j=0;j<response.getItems().get(i).getSearchItems().size();j++)
 					{
 						Integer person_id=response.getItems().get(i).getSearchItems().get(j).getPerson_id();
-						crimref.setPerson_id(person_id);
-					refres.getMatched_criminals().add(crimref);
-					ArrayList<ReferenceResults> clientlist=new ArrayList<ReferenceResults>();
-					clientlist.add(refres);
-				crimref.setClients(clientlist);
-					crimrefrep.save(crimref);
+					 Criminal criminal=crimrep.findByCode(person_id);
+					 if (criminal==null)
+					 {
+						 criminal=new Criminal();
+						 criminal.setPerson_id(person_id);
+						 criminal.setScore(response.getItems().get(i).getSearchItems().get(j).getScore());
+					 }
+					client.getMatched_reference_criminals().add(criminal);
+				criminal.getClientsreference().add(client);
 					}	
+					clientlist.add(client);		
 		}
+					
+					clientrep.saveAll(clientlist);
+					clientlist.clear();
 		}
 		 Long size=(Long) response.getSize();
 		 String body1 ;
@@ -118,51 +139,80 @@ public class BalayagesResultsHandler  {
 				  .retrieve()
 				  .bodyToMono(BalayageResultsDto.class)
 				  .block();
-       if (stateHandler.getStatus().equals("COMPLETED"))
+     
+    //if (stateHandler.getStatus().equals("COMPLETED"))
+       if (completed)
 		{
        for (int i=0;i<response1.getItems().size();i++)
 		{
-		
+    	   Client client =clientrep.findByCode(response1.getItems().get(i).getClient_code());
+			if (client==null)
+			{ 
+				client=new Client();
 				client.setClient_code(response1.getItems().get(i).getClient_code());
 				client.setFirst_name(response1.getItems().get(i).getFirst_name());
 				client.setLast_name(response1.getItems().get(i).getLast_name());
 				client.setWhole_name(response1.getItems().get(i).getWhole_name());
-				Criminal criminal=new Criminal();
+			}
 				for (int j=0;j<response1.getItems().get(i).getSearchItems().size();j++)
-				{
-					
-					Double score=response1.getItems().get(i).getSearchItems().get(j).getScore();
+				{ 
 					Integer person_id=response1.getItems().get(i).getSearchItems().get(j).getPerson_id();
+					 Criminal criminal=crimrep.findByCode(person_id);
+					 if (criminal==null)
+					 {
+						 criminal=new Criminal();
+					Double score=response1.getItems().get(i).getSearchItems().get(j).getScore();
 					criminal.setPerson_id(person_id);
 					criminal.setScore(score);
-				criminal.getClients().add(client);
+					 }
+					criminal.getClients().add(client);
 				client.getMatched_criminals().add(criminal);
-				ArrayList<Client> clientlist =new ArrayList<Client>();
-				clientlist.add(client);
-				criminal.setClients(clientlist);
-				crimrep.save(criminal);
 				}
+				clientlist.add(client);
 			}
+   	if (clientlist.size()==100)
+	{
+		clientrep.saveAll(clientlist);
+		clientlist.clear();
+		System.out.println("SAVED 100");
+		
+	}
 		}
     	   else
     		   {
     		   for (int i=0;i<response1.getItems().size();i++)
+				{
+    			   Client client =clientrep.findByCode(response1.getItems().get(i).getClient_code());
+					if (client==null)
+					{
+					client=new Client();
+					client.setClient_code(response1.getItems().get(i).getClient_code());
+					client.setFirst_name(response1.getItems().get(i).getFirst_name());
+					client.setLast_name(response1.getItems().get(i).getLast_name());
+					client.setWhole_name(response1.getItems().get(i).getWhole_name());
+					}
+					for (int j=0;j<response1.getItems().get(i).getSearchItems().size();j++)
+					{
+						Integer person_id=response1.getItems().get(i).getSearchItems().get(j).getPerson_id();
+					 Criminal criminal=crimrep.findByCode(person_id);
+					 if (criminal==null)
+					 {
+						 criminal=new Criminal();
+						 criminal.setPerson_id(person_id);
+						 criminal.setScore(response1.getItems().get(i).getSearchItems().get(j).getScore());
+					 }
+					client.getMatched_reference_criminals().add(criminal);
+				criminal.getClientsreference().add(client);
+					}	
+					clientlist.add(client);
+	           }
+    		 	if (clientlist.size()==100)
     			{
-    		   ReferenceResults refres=new ReferenceResults();
-			refres.setClient_code(response1.getItems().get(i).getClient_code());
-			CriminalReference crimref = new CriminalReference();
-			for (int j=0;j<response1.getItems().get(i).getSearchItems().size();j++)
-			{
-				Integer person_id=response1.getItems().get(i).getSearchItems().get(j).getPerson_id();
-				crimref.setPerson_id(person_id);
-				crimref.getClients().add(refres);
-			refres.getMatched_criminals().add(crimref);
-			ArrayList<ReferenceResults> clientlist=new ArrayList<ReferenceResults>();
-			clientlist.add(refres);
-		crimref.setClients(clientlist);
-			crimrefrep.save(crimref);
-			}		
-		}
+    				clientrep.saveAll(clientlist);
+    				clientlist.clear();
+    				System.out.println("SAVED 100");
+    				
+    			}
 		 }
 		start+=10;
 		}	

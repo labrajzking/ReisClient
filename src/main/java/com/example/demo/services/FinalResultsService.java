@@ -2,6 +2,8 @@ package com.example.demo.services;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +19,18 @@ private Integer person_id;
 @Override
 	public List<Results> getFinalResults1() {
 		List<List<Object>> results=crimrep.FinalResults1();
+		JSONArray json =new JSONArray (results);
+		System.out.println(json);
 		HashMap<Integer,Results> resultsHash=new HashMap<Integer,Results>();
 		for (int i=0;i<results.size();i++)
 		{
 			Results res=new Results();
-			res.setClient_code((String) results.get(i).get(1));
-			res.setPerson_id((Integer)results.get(i).get(0));
-			this.client_code=(String) results.get(i).get(1);
-			this.person_id=(Integer) results.get(i).get(0);
+			res.setClient_code((String) results.get(i).get(0));
+			res.setPerson_id((Integer)results.get(i).get(1));
+			res.setScore((Double)results.get(i).get(3));
+			res.setWhole_name((String) results.get(i).get(2));
+			this.client_code=(String) results.get(i).get(0);
+			this.person_id=(Integer) results.get(i).get(1);
 			int hash=hashCode();
 			if (!resultsHash.containsKey(hash))
 			{
@@ -39,14 +45,18 @@ private Integer person_id;
 @Override
 public List<Results> getFinalResults2() {
 	List<List<Object>> results=crimrep.FinalResults2();
+	JSONArray json =new JSONArray (results);
+	System.out.println(json);
 	HashMap<Integer,Results> resultsHash=new HashMap<Integer,Results>();
 	for (int i=0;i<results.size();i++)
 	{
 		Results res=new Results();
-		res.setClient_code((String) results.get(i).get(1));
-		res.setPerson_id((Integer)results.get(i).get(0));
-		this.client_code=(String) results.get(i).get(1);
-		this.person_id=(Integer) results.get(i).get(0);
+		res.setClient_code((String) results.get(i).get(0));
+		res.setPerson_id((Integer)results.get(i).get(1));
+		res.setScore((Double)results.get(i).get(3));
+		res.setWhole_name((String) results.get(i).get(2));
+		this.client_code=(String) results.get(i).get(0);
+		this.person_id=(Integer) results.get(i).get(1);
 		int hash=hashCode();
 		if (!resultsHash.containsKey(hash))
 		{
@@ -61,21 +71,8 @@ return resultsList;
 @Override
 public Outcome returnOutcome() {
 	Outcome Outcome=new Outcome();
-	if ((getFinalResults1().size())==(getFinalResults2().size()))
-	{
-		Outcome.setResultsList(getFinalResults1());
-		Outcome.setOutcome("The Results Are even");
-	}
-	else if ((getFinalResults1().size())>(getFinalResults2().size()))
-	{
-		Outcome.setResultsList(getFinalResults1());
-		Outcome.setOutcome("The Algorithme  Performance  Has Increased");
-	}
-	else if ((getFinalResults1().size())<(getFinalResults2().size()))
-	{
-		Outcome.setResultsList(getFinalResults2());
-		Outcome.setOutcome("The Algorithme Performance  Has Decreased");
-	}
+		Outcome.setResultsList1(getFinalResults1());
+		Outcome.setResultsList2(getFinalResults2());
 	return Outcome;
 }
 @Override

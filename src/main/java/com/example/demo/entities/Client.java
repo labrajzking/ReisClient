@@ -4,7 +4,9 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -16,8 +18,12 @@ private String client_code;
 private String first_name;
 private String last_name;
 private String whole_name;
-@ManyToMany(mappedBy="clients",cascade = CascadeType.PERSIST)
+@ManyToMany(fetch = FetchType.EAGER,cascade=CascadeType.PERSIST)
+@JoinTable(name="finallist")
 private List<Criminal> matched_criminals=new ArrayList<Criminal>();
+@ManyToMany(fetch = FetchType.EAGER,cascade=CascadeType.PERSIST)
+@JoinTable(name="referencelist")
+private List<Criminal> matched_reference_criminals=new ArrayList<Criminal>();
 public String getFirst_name() {
 	return first_name;
 }
@@ -47,6 +53,12 @@ public String getClient_code() {
 }
 public void setClient_code(String client_code) {
 	this.client_code = client_code;
+}
+public List<Criminal> getMatched_reference_criminals() {
+	return matched_reference_criminals;
+}
+public void setMatched_reference_criminals(List<Criminal> matched_reference_criminals) {
+	this.matched_reference_criminals = matched_reference_criminals;
 }
 
 }
