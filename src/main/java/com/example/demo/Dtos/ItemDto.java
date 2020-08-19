@@ -1,7 +1,6 @@
 package com.example.demo.Dtos;
 
 import java.util.List;
-
 public class ItemDto {
 	private String client_code;
 	private String first_name;
@@ -38,5 +37,4 @@ public class ItemDto {
 	public void setSearchItems(List<CriminalDto> items) {
 		this.SearchItems = items;
 	}
-	
 }

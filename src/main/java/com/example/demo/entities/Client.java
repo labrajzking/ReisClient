@@ -18,10 +18,10 @@ private String client_code;
 private String first_name;
 private String last_name;
 private String whole_name;
-@ManyToMany(fetch = FetchType.EAGER,cascade=CascadeType.PERSIST)
+@ManyToMany(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
 @JoinTable(name="finallist")
 private List<Criminal> matched_criminals=new ArrayList<Criminal>();
-@ManyToMany(fetch = FetchType.EAGER,cascade=CascadeType.PERSIST)
+@ManyToMany(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
 @JoinTable(name="referencelist")
 private List<Criminal> matched_reference_criminals=new ArrayList<Criminal>();
 public String getFirst_name() {

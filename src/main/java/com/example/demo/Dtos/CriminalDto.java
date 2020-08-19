@@ -1,14 +1,10 @@
 package com.example.demo.Dtos;
-
-import java.util.ArrayList;
 import java.util.List;
-
-import com.example.demo.entities.Client;
-
+import com.example.demo.POJOS.PersonsName;
 public class CriminalDto {
 	private Integer person_id;
 	private Double score;
-	private List<Client> clients=new ArrayList<Client>();
+	private List<PersonsName> name;
 	public Integer getPerson_id() {
 		return person_id;
 	}
@@ -21,12 +17,11 @@ public class CriminalDto {
 	public void setScore(Double score) {
 		this.score = score;
 	}
-	
-	public List<Client> getClients() {
-		return clients;
+	public List<PersonsName> getName() {
+		return name;
 	}
-	public void setClients(List<Client> clients) {
-		this.clients = clients;
+	public void setName(List<PersonsName> name) {
+		this.name = name;
 	}
 
 }

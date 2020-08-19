@@ -5,6 +5,7 @@ private String client_code;
 private Integer person_id;
 private String whole_name;
 private Double score;
+private String person_whole_name;
 public String getClient_code() {
 	return client_code;
 }
@@ -28,6 +29,12 @@ public Double getScore() {
 }
 public void setScore(Double score) {
 	this.score = score;
+}
+public String getPerson_whole_name() {
+	return person_whole_name;
+}
+public void setPerson_whole_name(String person_whole_name) {
+	this.person_whole_name = person_whole_name;
 }
 
 }

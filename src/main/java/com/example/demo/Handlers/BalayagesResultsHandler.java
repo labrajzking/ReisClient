@@ -35,11 +35,10 @@ public class BalayagesResultsHandler  {
 	public Boolean getDone() {
 		return done;
 	}
-
 	public void setDone(Boolean done) {
 		this.done = done;
 	}
-	@Scheduled (fixedRate=1000*600,initialDelay=1000*15)
+	//@Scheduled (fixedRate=1000*600,initialDelay=1000*15)
 	public void GetBalayages () 
 	{
 			int start=0;
@@ -57,8 +56,8 @@ public class BalayagesResultsHandler  {
 				  .bodyToMono(BalayageResultsDto.class)
 				  .block();
          ArrayList<Client> clientlist=new ArrayList<Client>();
-         //if (stateHandler.getStatus().equals("COMPLETED"))
-         if (completed)
+         if (stateHandler.getStatus().equals("COMPLETED"))
+        // if (completed)
 			{
 		for (int i=0;i<response.getItems().size();i++)
 		{
@@ -81,6 +80,7 @@ public class BalayagesResultsHandler  {
 					Double score=response.getItems().get(i).getSearchItems().get(j).getScore();
 					criminal.setPerson_id(person_id);
 					criminal.setScore(score);
+					criminal.setPerson_whole_name(response.getItems().get(i).getSearchItems().get(j).getName().get(0).getWhole_name());
 					 }
 					criminal.getClients().add(client);
 				client.getMatched_criminals().add(criminal);
@@ -112,6 +112,7 @@ public class BalayagesResultsHandler  {
 						 criminal=new Criminal();
 						 criminal.setPerson_id(person_id);
 						 criminal.setScore(response.getItems().get(i).getSearchItems().get(j).getScore());
+						 criminal.setPerson_whole_name(response.getItems().get(i).getSearchItems().get(j).getName().get(0).getWhole_name());
 					 }
 					client.getMatched_reference_criminals().add(criminal);
 				criminal.getClientsreference().add(client);
@@ -140,8 +141,8 @@ public class BalayagesResultsHandler  {
 				  .bodyToMono(BalayageResultsDto.class)
 				  .block();
      
-    //if (stateHandler.getStatus().equals("COMPLETED"))
-       if (completed)
+    if (stateHandler.getStatus().equals("COMPLETED"))
+      // if (completed)
 		{
        for (int i=0;i<response1.getItems().size();i++)
 		{
@@ -164,6 +165,7 @@ public class BalayagesResultsHandler  {
 					Double score=response1.getItems().get(i).getSearchItems().get(j).getScore();
 					criminal.setPerson_id(person_id);
 					criminal.setScore(score);
+					criminal.setPerson_whole_name(response1.getItems().get(i).getSearchItems().get(j).getName().get(0).getWhole_name());
 					 }
 					criminal.getClients().add(client);
 				client.getMatched_criminals().add(criminal);
@@ -200,6 +202,7 @@ public class BalayagesResultsHandler  {
 						 criminal=new Criminal();
 						 criminal.setPerson_id(person_id);
 						 criminal.setScore(response1.getItems().get(i).getSearchItems().get(j).getScore());
+						 criminal.setPerson_whole_name(response1.getItems().get(i).getSearchItems().get(j).getName().get(0).getWhole_name());
 					 }
 					client.getMatched_reference_criminals().add(criminal);
 				criminal.getClientsreference().add(client);

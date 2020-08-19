@@ -4,23 +4,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.demo.Dtos.UserDto;
 import com.example.demo.POJOS.BalayagesProgression;
 import com.example.demo.POJOS.Outcome;
-import com.example.demo.entities.UserE;
 import com.example.demo.services.FinalResultsService;
 import com.example.demo.services.GetResultsService;
 import com.example.demo.services.ProgressionService;
 import com.example.demo.services.StartBalayagesService;
-import com.example.demo.services.UserService;
-
 @RestController
 public class UserController {
-@Autowired
-UserService userservice;
 @Autowired 
 ModelMapper modelMapper;
 @Autowired 
@@ -31,28 +23,6 @@ StartBalayagesService startbalayagesservice;
 FinalResultsService finalservice;
 @Autowired 
 ProgressionService progressionservice;
-private UserE ConvertToEntity (UserDto userdto)
-{
-	modelMapper.getConfiguration()
-	  .setFieldMatchingEnabled(true);
-	return modelMapper.map(userdto,UserE.class);
-}
-private UserDto ConvertToDto (UserE user)
-{
-	modelMapper.getConfiguration()
-	  .setFieldMatchingEnabled(true);
-	return modelMapper.map(user,UserDto.class);
-}
-@CrossOrigin(origins = "http://localhost:4200")
-@PostMapping ("/signup")
-public UserDto signup (@RequestBody UserDto userdto)
-{	System.out.println(userdto.getUsername());
-System.out.println(userdto.getPassword());
-	UserE user=ConvertToEntity(userdto);
-	userservice.signup(user);
-	UserDto userDTO=ConvertToDto(user);
-	return userDTO;	
-}
 @CrossOrigin(origins = "http://localhost:4200")
 @GetMapping ("/GetResults")
 public void GetResults () throws IOException
@@ -67,7 +37,7 @@ public void StartBalayages () throws IOException
 }
 @CrossOrigin(origins = "http://localhost:4200")
 @GetMapping ("/GetFinalResults")
-public Outcome retunnResults()
+public Outcome retunnResults() throws IOException
 {
 	return finalservice.returnOutcome();
 }

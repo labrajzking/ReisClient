@@ -53,7 +53,7 @@ public class TokenHandler implements CommandLineRunner{
 		return adminDto;
 	}
 	
-	@Scheduled(fixedRate=1000*60)
+	@Scheduled(fixedRate=1000*160)
 public void RefreshToken()
 {
 		if (tokencatched)
